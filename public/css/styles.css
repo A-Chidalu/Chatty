@@ -1,0 +1,19 @@
+.mainTitle {
+    display: flex;
+    justify-content: center;
+}
+
+.inputForm {
+    background-color: aliceblue;
+}
+
+.usernameDiv {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.roomDiv {
+    display: flex;
+    justify-content: center;
+}
