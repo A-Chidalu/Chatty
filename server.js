@@ -10,9 +10,18 @@ const io = socketio(server);
 //Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+//listen to the submit form;
+
+
+
 io.on('connection', socket => {
     console.log('A Client Has connected!');
-})
+
+    socket.emit('message', 'Hello!');
+
+ 
+});
 
 const PORT = 3000 || process.env.PORT;
 
