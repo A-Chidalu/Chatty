@@ -12,7 +12,8 @@ socket.on('connect', () => {
 });
 
 socket.on('message', (msg) => {
-    console.log(msg)
+    console.log(msg);
+    //output msg here
 });
 
 const msgInput = document.getElementById('msgInput');
@@ -31,37 +32,63 @@ msgInput.addEventListener("keyup", function(event) {
 
 sendButton.addEventListener("click", () => {
     const msg = msgInput.value;
-    renderPersonalMsg(msg);
+    const username = getUserName();
+
+    socket.emit('chatMessage', msg);
+
+    renderPersonalMsg(msg, username);
     msgInput.value = ""; //clear the input field
 })
 
 
 
-function renderPersonalMsg(msg) {
+function renderPersonalMsg(msg, userName) {
     let node = document.createElement('div');
-    node.setAttribute("class", "alert alert-primary"); //or node.setAttribute("class", "className") works as well
+    node.setAttribute("class", "alert alert-primary mx-4"); //or node.setAttribute("class", "className") works as well
     node.setAttribute("role", "alert");
-    let textNode = document.createTextNode(msg);
-    node.appendChild(textNode);
+
+    node.innerHTML = 
+    `
+    <p><strong>${userName}</strong> 8:30pm</p>
+    <hr>
+    <p class="mb-0">${msg}</p>
+    `;
+
+
     document.getElementById("content").appendChild(node); 
 }
 
 function renderOutsiderMsg(msg) {
     let node = document.createElement('div');
-    node.setAttribute("class", "alert alert-secondary"); //or node.setAttribute("class", "className") works as well
+    node.setAttribute("class", "alert alert-secondary mx-4"); //or node.setAttribute("class", "className") works as well
     node.setAttribute("role", "alert");
-    let textNode = document.createTextNode(msg);
-    node.appendChild(textNode);
+
+    node.innerHTML = 
+    `
+    <p><strong>${userName}</strong> 8:30pm</p>
+    <hr>
+    <p class="mb-0">${msg}</p>
+    `;
+
     document.getElementById("content").appendChild(node); 
 }
 
 function renderUserJoinedMsg(user) {
     let node = document.createElement('div');
-    node.setAttribute("class", "alert alert-success"); //or node.setAttribute("class", "className") works as well
+    node.setAttribute("class", "alert alert-success mx-4 my-2"); //or node.setAttribute("class", "className") works as well
     node.setAttribute("role", "alert");
     let textNode = document.createTextNode(user + " Has Joined the Room!");
     node.appendChild(textNode);
     document.getElementById("content").appendChild(node);  
+}
+
+function getUserName() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    //console.log(`<div>${urlParams.get('userName')}`);
+    let userName = urlParams.get('userName');
+
+    return userName;
 }
 
 
