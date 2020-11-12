@@ -1,5 +1,6 @@
 const socket = io();
 
+
 socket.on('connect', () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -34,9 +35,11 @@ sendButton.addEventListener("click", () => {
     const msg = msgInput.value;
     const username = getUserName();
 
-    socket.emit('chatMessage', msg);
+    const payload = {username, msg};
 
-    renderPersonalMsg(msg, username);
+    socket.emit('chatMessage', payload);
+
+    renderPersonalMsg(msg + "this is the rendered msg", username);
     msgInput.value = ""; //clear the input field
 })
 

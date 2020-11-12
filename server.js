@@ -5,6 +5,7 @@ const http = require('http');
 const server = http.createServer(app);
 const socketio = require('socket.io');
 const io = socketio(server);
+const formatMessage = require('./utilities/formatMessage');
 
 
 //Set static folder
@@ -27,8 +28,9 @@ io.on('connection', socket => {
     });
 
     //Listen for clients sending the chatMessage event
-    socket.on('chatMessage', msg => {
-        io.emit('message', msg);
+    socket.on('chatMessage', payload => {
+        const message = formatMessage(payload.username, payload.msg);
+        io.emit('message', message);
     })
 });
 
