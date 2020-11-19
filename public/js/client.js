@@ -2,19 +2,24 @@ const socket = io();
 
 
 socket.on('connect', () => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    //console.log(`<div>${urlParams.get('userName')}`);
-    let userName = urlParams.get('userName');
+
+    let userName = getQueryStringItem("userName");
+    let roomName = getQueryStringItem("chatRoom");
     renderUserJoinedMsg(userName);
- 
+    
+    let payload = {userName, roomName};
+    socket.emit('joinRoom', payload);
     
 
 });
 
 socket.on('message', (msg) => {
     console.log(msg);
-    //output msg here
+    renderPersonalMsg(msg.msgString, msg.userName, msg.time);
+});
+
+socket.on('userJoined', (userName) => {
+    renderUserJoinedMsg(userName);
 });
 
 const msgInput = document.getElementById('msgInput');
@@ -33,26 +38,27 @@ msgInput.addEventListener("keyup", function(event) {
 
 sendButton.addEventListener("click", () => {
     const msg = msgInput.value;
-    const username = getUserName();
+    const username = getQueryStringItem('userName');
+    const roomName = getQueryStringItem('chatRoom');
 
-    const payload = {username, msg};
+    const payload = {username, msg, roomName};
 
     socket.emit('chatMessage', payload);
 
-    renderPersonalMsg(msg + "this is the rendered msg", username);
+    //renderPersonalMsg(msg + "this is the rendered msg", username);
     msgInput.value = ""; //clear the input field
 })
 
 
 
-function renderPersonalMsg(msg, userName) {
+function renderPersonalMsg(msg, userName, time) {
     let node = document.createElement('div');
     node.setAttribute("class", "alert alert-primary mx-4"); //or node.setAttribute("class", "className") works as well
     node.setAttribute("role", "alert");
 
     node.innerHTML = 
     `
-    <p><strong>${userName}</strong> 8:30pm</p>
+    <p><strong>${userName}</strong> ${time}</p>
     <hr>
     <p class="mb-0">${msg}</p>
     `;
@@ -85,13 +91,13 @@ function renderUserJoinedMsg(user) {
     document.getElementById("content").appendChild(node);  
 }
 
-function getUserName() {
+function getQueryStringItem(key) {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     //console.log(`<div>${urlParams.get('userName')}`);
-    let userName = urlParams.get('userName');
+    let result = urlParams.get(key);
 
-    return userName;
+    return result;
 }
 
 

@@ -21,14 +21,14 @@
               <label for="exampleInputEmail1">Username</label>
               <input type="text" name="userName" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
               <small id="emailHelp" class="form-text text-muted my-2">This is what other chatters will recognize you by.</small>
-              <select required name="chatRoom" class="custom-select">
+              <select id="roomSelector" name="chatRoom" class="custom-select">
                 <option selected>Chat Room to Join</option>
                 <option value="red">Red Room</option>
                 <option value="green">Green Room</option>
                 <option value="blue">Blue Room</option>
               </select>
               <br>
-              <button type="submit" class="btn btn-primary my-2">Join Chat Room</button>
+              <button type="submit" id="submitBttn" class="btn btn-primary my-2">Join Chat Room</button>
                 
             </div>
          
@@ -36,7 +36,22 @@
 
         </form>
     <script>
+      const submitButton = document.getElementById('submitBttn');
+      const roomSelector = document.getElementById('roomSelector');
 
+      submitButton.addEventListener('click', (e) => {
+        const rooms = ["red", "green", "blue"];
+        if(!rooms.includes(roomSelector.value)){
+          //alert(roomSelector.value);
+          e.preventDefault();
+          alert('Please Select a Room to join');
+          //alert('Im in here!');
+          return;
+        } 
+        else {
+
+        }
+      });
     </script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

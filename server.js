@@ -7,6 +7,7 @@ const socketio = require('socket.io');
 const io = socketio(server);
 const formatMessage = require('./utilities/formatMessage');
 
+let userDB = {}; //Hashtable with Key=socket.id and values=Username
 
 //Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -19,9 +20,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 io.on('connection', socket => {
     console.log('A Client Has connected!');
 
-    socket.emit('message', 'Hello!');
+    socket.on('joinRoom', payload => {
+        let user = payload.userName;
+        let room = payload.roomName;
 
-    socket.broadcast.emit('message', 'A user has joined the chat');
+        userDB[socket.id] = {user, room}; //Add a new entry to the hashmap
+
+        socket.join(room);
+        socket.broadcast.to(room).emit('userJoined', user);
+    });
+
+
     
     socket.on('disconnect', () => {
         io.emit('message', 'A user has left the chat');
@@ -29,8 +38,8 @@ io.on('connection', socket => {
 
     //Listen for clients sending the chatMessage event
     socket.on('chatMessage', payload => {
-        const message = formatMessage(payload.username, payload.msg);
-        io.emit('message', message);
+        const message = formatMessage(payload.username, payload.roomName, payload.msg);
+        io.to(payload.roomName).emit('message', message);
     })
 });
 
